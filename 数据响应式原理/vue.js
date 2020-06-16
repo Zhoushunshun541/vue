@@ -47,19 +47,37 @@ class Vue extends EventTarget{
         if (list) {
           list.forEach((res,i) => {
             var $1 = res.replace("{{",'').replace("}}",'').trim()
-            // 匹配到有值 就进行字符串替换  将原文中匹配到{{}} 替换成 data中对应的key
             let _this = this
-            this._data[$1] &&
-            (node.textContent = text.replace(req, function(a,i) {
-              return _this._data[i]
-            }))
-            // 这里匹配到了 $1 为name  监听他的事件 然后如果有事件  就将当前节点的内容  替换成 当前时间传入的参数
-            // 这个参数  就是上面observe中的自定义事件
-            this.addEventListener($1, e => {
-              node.textContent = text.replace(req,function(a,i,t,tq) {
-                return i == $1? e.detail : _this._data[i]
+            if ($1.indexOf('.') != -1) {
+              let $p = $1.split('.')
+              // 匹配到有值 就进行字符串替换  将原文中匹配到{{}} 替换成 data中对应的key
+              this._data[$p[0]][$p[1]] &&
+              (node.textContent = text.replace(req, function(a,i) {
+                let arr = i.split('.')
+                return _this._data[arr[0]][arr[1]]
+              }))
+              // 这里匹配到了 $1 为name  监听他的事件 然后如果有事件  就将当前节点的内容  替换成 当前时间传入的参数
+              // 这个参数  就是上面observe中的自定义事件
+              this.addEventListener($1, e => {
+                node.textContent = text.replace(req,function(a,i,t,tq) {
+                  let arr = i.split('.')
+                  return i == $1? e.detail : _this._data[arr[0]][arr[1]]
+                })
               })
-            })
+            }else{
+              // 匹配到有值 就进行字符串替换  将原文中匹配到{{}} 替换成 data中对应的key
+              this._data[$1] &&
+              (node.textContent = text.replace(req, function(a,i) {
+                return _this._data[i]
+              }))
+              // 这里匹配到了 $1 为name  监听他的事件 然后如果有事件  就将当前节点的内容  替换成 当前时间传入的参数
+              // 这个参数  就是上面observe中的自定义事件
+              this.addEventListener($1, e => {
+                node.textContent = text.replace(req,function(a,i,t,tq) {
+                  return i == $1? e.detail : _this._data[i]
+                })
+              })
+            }
           })
         }
       } else if (node.nodeType === 1) {
@@ -69,11 +87,20 @@ class Vue extends EventTarget{
         if (attr.hasOwnProperty("v-model")) {
           //获取属性的值
           let key = attr['v-model'].nodeValue
-          // 将data中的数据显示到节点上
-          node.value = this._data[key]
-          node.addEventListener("input",e => {
-            this._data[key] = node.value
-          })
+          if (key.indexOf('.') != -1) {
+            // 将data中的数据显示到节点上
+            let arr = key.split('.')
+            node.value = this._data[arr[0]][arr[1]]
+            node.addEventListener("input",e => {
+              this._data[arr[0]][arr[1]] = node.value
+            })
+          }else{
+            // 将data中的数据显示到节点上
+            node.value = this._data[key]
+            node.addEventListener("input",e => {
+              this._data[key] = node.value
+            })
+          }
         }
         this.compileNode(node)
       }

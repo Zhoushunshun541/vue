@@ -10,9 +10,11 @@
 
 <body>
   <div id="app">
-    {{name}} ------- {{age}} ------ {{message}}
+    {{name}} ------- {{age}} ------ {{message.sex}}
     <div>
-      <input v-model="message"></input>
+      <div> message：<input v-model="message.sex" /></div>
+      <div> age：<input v-model="age" /></div>
+      <div> name：<input v-model="name" /></div>
     </div>
   </div>
   <script>
@@ -21,7 +23,9 @@
       data: {
         name: 'zss',
         age: 29,
-        message:''
+        message:{
+          sex:"男"
+        }
       }
     })
   </script>
