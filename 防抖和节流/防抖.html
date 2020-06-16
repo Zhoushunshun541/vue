@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>防抖</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .box {
+      height: 200px;
+      background-color: aqua;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box"></div>
+  <script>
+    /**
+      防抖是  触发时间后的n秒内  函数只执行一次  如果在这n秒内又触发了事件  则重新计算函数的执行时间
+    */
+    var box = document.querySelector('.box')
+    var testDebounce = debounce(move, 10)
+    box.onmousemove = testDebounce
+
+    function move(ev) {
+      this.innerHTML = ev.clientX
+    }
+    // 防抖
+    function debounce(fn, wait) {
+      let timmer = null
+      return function () {
+        var args = arguments
+        timmer && clearTimeout(timmer);
+        timmer = setTimeout(() => {
+          fn.apply(this, args)
+        }, wait)
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>01</title>
+</head>
+
+<body>
+  <script>
+    var data = {
+      name: 'lili',
+      age: 28
+    }
+    let p = new Proxy(data, {
+      set(target, handler, newValue) {
+        console.log("set....", target, handler, newValue)
+        return Reflect.set(...arguments)
+      },
+      get(target, props) {
+        console.log("get....", target, props)
+        // return target[props]
+        return Reflect.get(...arguments)
+      }
+    })
+    p.age = 21
+    console.log(p.age)
+  </script>
+</body>
+
+</html>

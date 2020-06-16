@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>节流</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .box {
+      height: 200px;
+      background-color: aquamarine;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box"></div>
+  <script>
+    /**
+     *  指连续触发时间  但是在一定时间内只执行一次的函数
+     */
+    var box = document.querySelector('.box')
+
+    // var test = jl(move, 1000)
+    var test = jlOne(move, 1000)
+
+    box.onmousemove = test
+    // 需要进行的操作
+    function move(ev) {
+      this.innerHTML = ev.clientX
+    }
+    // 节流函数  定义一个变量来接收定时器
+    // 然后返回的也是一个函数 
+    function jl(fn, wait) {
+      let timmer = null;
+      return function () {
+        // 函数中  先获取到参数  然后判断   timmer是空  就启动定时器  1s一次
+        var args = arguments
+        if (!timmer) {
+          timmer = setTimeout(() => {
+            // 在定时器中   1s后 清除这个变量信息  执行传递来的函数  然后继续下一轮的函数执行
+            // 但是定时器一直没有被清除  效果可能不是很好
+            timmer = null;
+            fn.apply(this, args)
+          }, wait)
+        }
+      }
+    }
+    // 另一种节流方法
+    function jlOne(fn, wait) {
+      let last = 0;
+      return function () {
+        // 获取当前的时间戳
+        var args = arguments
+        var now = Date.now()
+        // 如果当前时间 - 上次时间  大于需要等待的时间  就执行一次
+        if (now - last > wait) {
+          fn.apply(this, args)
+          // 同事把这次时间赋值给last 
+          last = now
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>
