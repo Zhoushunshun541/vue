@@ -5,3 +5,12 @@ console.log(
     return b
   })
 )
+
+var obj = {
+  data: {
+    sex: {
+      name: '周顺顺',
+    },
+  },
+}
+console.log(obj["data.sex"])
